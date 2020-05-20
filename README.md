@@ -39,12 +39,18 @@ Set up the name of staging and production branches (direct pushes to these branc
 	{
 		"email": "email@company.com",
 		"name": "nick-name",
-		"aId": "1111111111111111", // Asana user gid
-		"gId": 1234567, // GitLab user id (number)
-		"aUtl": "1111111111111112" // Asana user task list gid
+		"aId": "1111111111111111",
+		"gId": 1234567,
+		"aUtl": "1111111111111112"
 	}
 ]
 ```
+
+`"aId"` - Asana user gid
+
+`"gId"` - GitLab user id (number)
+
+`"aUtl"` - Asana user task list gid
 
 For Asana side you can also set up the prefix used in id ( \[&lt;**Prefix**&gt;-&lt;#&gt;] ) and the name of the custom field that represents the task progress (or status).
 
