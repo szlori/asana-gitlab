@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
+import { MyLogger } from './mylogger';
 import jsonfile = require('jsonfile');
 
 export interface StoredWebhook {
@@ -28,15 +28,16 @@ export interface GitlabUser {
 }
 
 @Injectable()
+@Dependencies(MyLogger)
 export class StorageService {
-	private logger = new Logger('StorageService');
 	private secret = '';
 
 	asanaUserMap: Map<string, AsanaUser> = new Map();
 	gitlabUserMap: Map<number, GitlabUser> = new Map();
 
-	constructor() {
+	constructor(private readonly logger: MyLogger) {
 		this.createUserMaps();
+		this.logger.setContext('StorageService');
 	}
 
 	// Retrieve webhook info stored in local JSON
@@ -76,8 +77,10 @@ export class StorageService {
 				spaces: '\t ',
 			});
 
-			if (webhook.secret) {
+			if (webhook && webhook.secret) {
 				this.secret = webhook.secret;
+			} else {
+				this.secret = '';
 			}
 		} catch (err) {
 			this.logger.error(`${err}`);

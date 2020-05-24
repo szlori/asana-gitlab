@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { Logger, Injectable, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 import * as Asana from 'asana';
 import * as CryptoJS from 'crypto-js';
 import { StorageService } from './storage.service';
-
+import { MyLogger } from './mylogger';
 export interface AsanaPostBody {
 	events: Asana.resources.Events.EventDataEntity[];
 }
@@ -31,16 +31,20 @@ interface UpdateTaskIdData {
 }
 
 @Injectable()
-@Dependencies(StorageService)
+@Dependencies([StorageService, MyLogger])
 export class AsanaService {
-	private logger: Logger = new Logger('AsanaService');
 	private asanaClt: Asana.Client = Asana.Client.create().useAccessToken(
 		process.env.ASANA_PATOKEN,
 	);
 	private project: Asana.resources.Projects.Type = null;
 	private lastTask: LastTask = null;
 
-	constructor(private readonly storageService: StorageService) {}
+	constructor(
+		private readonly storageService: StorageService,
+		private readonly logger: MyLogger,
+	) {
+		logger.setContext('AsanaService');
+	}
 
 	// Utiliyy to retrieve the webhooks set up on an Asana project
 	async getHooks(): Promise<any> {

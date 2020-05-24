@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { Injectable, Dependencies } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
 import { AsanaService } from './asana.service';
 import { ProjectsBundle } from '@gitbeaker/node';
 import { StorageService, GitlabUser } from './storage.service';
+import { MyLogger } from './mylogger';
 
 const excludedRefs = _.map(
 	[process.env.PRODUCTION_BRANCH_NAME, process.env.STAGING_BRANCH_NAME],
@@ -11,9 +11,8 @@ const excludedRefs = _.map(
 );
 
 @Injectable()
-@Dependencies([AsanaService, StorageService])
+@Dependencies([AsanaService, StorageService, MyLogger])
 export class GitlabService {
-	private logger = new Logger('GitlabService');
 	private gitlabClt = new ProjectsBundle({
 		token: process.env.GITLAB_PATOKEN,
 	});
@@ -21,7 +20,10 @@ export class GitlabService {
 	constructor(
 		private readonly asanaService: AsanaService,
 		private readonly storageService: StorageService,
-	) {}
+		private readonly logger: MyLogger,
+	) {
+		this.logger.setContext('GitlabService');
+	}
 
 	// Verify validity of a webhook post by checking secret
 	verifyPost(secretFromPost: string): boolean {
