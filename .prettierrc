@@ -1,7 +1,5 @@
 {
 	"singleQuote": true,
 	"trailingComma": "all",
-	"bracketSpacing": true,
-	"arrowParens": "always",
 	"useTabs": true
 }
